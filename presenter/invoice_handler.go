@@ -14,15 +14,6 @@ type InvoiceHandler struct {
 	Usecase usecase.InvoiceUsecase
 }
 
-func NewInvoiceHandler(router *mux.Router, uc usecase.InvoiceUsecase) {
-	handler := &InvoiceHandler{Usecase: uc}
-
-	router.HandleFunc("/invoices", handler.Create).Methods("POST")
-	router.HandleFunc("/invoices", handler.GetAll).Methods("GET")
-	router.HandleFunc("/invoices/{id}", handler.GetByID).Methods("GET")
-	router.HandleFunc("/invoices/{id}", handler.Delete).Methods("DELETE")
-}
-
 func (h *InvoiceHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

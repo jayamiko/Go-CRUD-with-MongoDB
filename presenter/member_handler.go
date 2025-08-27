@@ -14,18 +14,6 @@ type MemberHandler struct {
 	Usecase usecase.MemberUsecase
 }
 
-
-func NewMemberHandler(router *mux.Router, uc usecase.MemberUsecase) {
-	handler := &MemberHandler{Usecase: uc}
-
-	// CRUD routes
-	router.HandleFunc("/members", handler.GetAll).Methods("GET")
-	router.HandleFunc("/members/{recruiterId}", handler.GetByRecruiter).Methods("GET")
-	router.HandleFunc("/members", handler.Create).Methods("POST")
-	router.HandleFunc("/members/{recruiterId}", handler.UpdateByRecruiter).Methods("PUT")
-	router.HandleFunc("/members/{recruiterId}", handler.DeleteByRecruiter).Methods("DELETE")
-}
-
 func removePassword(member *model.Member) *model.Member {
 	if member != nil {
 		member.Password = ""

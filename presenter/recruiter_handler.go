@@ -13,16 +13,6 @@ type RecruiterHandler struct {
 	Usecase usecase.RecruiterUsecase
 }
 
-func NewRecruiterHandler(router *mux.Router, uc usecase.RecruiterUsecase) {
-	h := &RecruiterHandler{Usecase: uc}
-
-	router.HandleFunc("/recruiters", h.Create).Methods("POST")
-	router.HandleFunc("/recruiters", h.GetAll).Methods("GET")
-	router.HandleFunc("/recruiters/{id}", h.GetByID).Methods("GET")
-	router.HandleFunc("/recruiters/{id}", h.Update).Methods("PUT")
-	router.HandleFunc("/recruiters/{id}", h.Delete).Methods("DELETE")
-}
-
 func (h *RecruiterHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var recruiter model.Recruiter

@@ -9,7 +9,8 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/mydb
+      - MONGO_URI=mongodb://mongodb:27017/db_test
+      - DATABASE_NAME=db_test
     networks:
       - app-network
 

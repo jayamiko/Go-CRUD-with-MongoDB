@@ -13,16 +13,6 @@ type ProductHandler struct {
     Usecase usecase.ProductUsecase
 }
 
-func NewProductHandler(router *mux.Router, uc usecase.ProductUsecase) {
-    handler := &ProductHandler{Usecase: uc}
-
-    router.HandleFunc("/products", handler.GetAll).Methods("GET")
-    router.HandleFunc("/products/{id}", handler.GetByID).Methods("GET")
-    router.HandleFunc("/products", handler.Create).Methods("POST")
-    router.HandleFunc("/products/{id}", handler.Update).Methods("PUT")
-    router.HandleFunc("/products/{id}", handler.Delete).Methods("DELETE")
-}
-
 func (h *ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     products, err := h.Usecase.GetAll()

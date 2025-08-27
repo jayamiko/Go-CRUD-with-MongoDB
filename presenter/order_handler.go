@@ -13,14 +13,6 @@ type OrderHandler struct {
     Usecase usecase.OrderUsecase
 }
 
-func NewOrderHandler(router *mux.Router, uc usecase.OrderUsecase) {
-    handler := &OrderHandler{Usecase: uc}
-
-    router.HandleFunc("/orders", handler.GetAll).Methods("GET")
-    router.HandleFunc("/orders/{id}", handler.GetByID).Methods("GET")
-    router.HandleFunc("/orders", handler.Create).Methods("POST")
-}
-
 func (h *OrderHandler) GetAll(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     orders, err := h.Usecase.GetAll()

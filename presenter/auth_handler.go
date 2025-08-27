@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -18,14 +17,9 @@ import (
 type AuthHandler struct {
 	MemberCollection *mongo.Collection
 	AdminCollection  *mongo.Collection
-	RecruiterCollection  *mongo.Collection
 }
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET")) 
-
-func NewAuthHandler(router *mux.Router, authHandler *AuthHandler) {
-    router.HandleFunc("/login", authHandler.Login).Methods("POST") 
-}
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

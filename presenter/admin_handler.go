@@ -14,16 +14,6 @@ type AdminHandler struct {
 	Usecase usecase.AdminUsecase
 }
 
-func NewAdminHandler(router *mux.Router, uc usecase.AdminUsecase) {
-	handler := &AdminHandler{Usecase: uc}
-
-	router.HandleFunc("/admins", handler.GetAll).Methods("GET")
-	router.HandleFunc("/admins/{email}", handler.GetByEmail).Methods("GET")
-	router.HandleFunc("/admins", handler.Create).Methods("POST")
-	router.HandleFunc("/admins/{email}", handler.UpdateByEmail).Methods("PUT")
-	router.HandleFunc("/admins/{email}", handler.DeleteByEmail).Methods("DELETE")
-}
-
 func (h *AdminHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	admins, _ := h.Usecase.GetAll()
