@@ -74,14 +74,19 @@ func (r *memberMongoRepository) Create(member *model.Member) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	if member.ID.IsZero() {
+		member.ID = primitive.NewObjectID()
+	}
+
+	member.CreatedAt = time.Now()
+	member.UpdatedAt = time.Now()
+
 	res, err := r.collection.InsertOne(ctx, member)
 	if err != nil {
 		return err
 	}
 
-	if oid, ok := res.InsertedID.(primitive.ObjectID); ok {
-		member.ID = oid 
-	}
+	member.ID = res.InsertedID.(primitive.ObjectID)
 
 	return nil
 }

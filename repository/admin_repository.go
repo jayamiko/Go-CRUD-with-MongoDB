@@ -8,6 +8,7 @@ import (
 	"golang-crud-basic/model"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -63,7 +64,8 @@ func (r *adminMongoRepository) Create(admin *model.Admin) error {
 	admin.CreatedAt = time.Now()
 	admin.UpdatedAt = time.Now()
 
-	_, err := r.collection.InsertOne(ctx, admin)
+	res, err := r.collection.InsertOne(ctx, admin)
+	admin.ID = res.InsertedID.(primitive.ObjectID)
 	return err
 }
 

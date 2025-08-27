@@ -1,8 +1,13 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Admin struct {
+    ID    		 primitive.ObjectID `bson:"_id" json:"_id"`
     Username     string    `bson:"username" json:"username"`
     Email        string    `bson:"email" json:"email"`
     Password 	 string    `bson:"password" json:"password,omitempty"` 

@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MemberHandler struct {
@@ -62,6 +63,10 @@ func (h *MemberHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if member.ID.IsZero() {
+		member.ID = primitive.NewObjectID()
+	}
+
 	if err := h.Usecase.Create(&member); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -94,12 +99,11 @@ func (h *MemberHandler) UpdateByRecruiter(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(removePassword(updatedMember))
 }
 
-// DELETE member by recruiterId
 func (h *MemberHandler) DeleteByRecruiter(w http.ResponseWriter, r *http.Request) {
 	recruiterID := mux.Vars(r)["recruiterId"]
 
 	if err := h.Usecase.Delete(recruiterID); err != nil {
-		if errors.Is(err, model.ErrMemberNotFound) { // undefined: model.ErrMemberNotFound
+		if errors.Is(err, model.ErrMemberNotFound) { 
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}

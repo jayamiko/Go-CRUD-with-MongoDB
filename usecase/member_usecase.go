@@ -37,21 +37,17 @@ func (uc *memberUsecase) GetByRecruiterID(recruiterID string) (*model.Member, er
 
 
 func (uc *memberUsecase) Create(member *model.Member) error {
-    // Generate recruiterId otomatis
     member.RecruiterID = primitive.NewObjectID()
 
-    // Validasi statusAktivasi
     if member.StatusAktivasi != "ACTIVE" && member.StatusAktivasi != "INACTIVE" && member.StatusAktivasi != "PENDING" {
         return errors.New("invalid statusAktivasi, must be ACTIVE, INACTIVE, or PENDING")
     }
 
-    // Validasi email format
     match, _ := regexp.MatchString(`^.+@.+\..+$`, member.Email)
     if !match {
         return errors.New("invalid email format")
     }
 
-    // **Cek duplicate email**
     exists, err := uc.memberRepo.ExistsByEmail(member.Email)
     if err != nil {
         return err
@@ -60,7 +56,6 @@ func (uc *memberUsecase) Create(member *model.Member) error {
         return errors.New("email already in use")
     }
 
-    // Password wajib dan hash
     if member.Password == "" {
         return errors.New("password is required")
     }
@@ -70,7 +65,6 @@ func (uc *memberUsecase) Create(member *model.Member) error {
     }
     member.Password = string(hashedPassword)
 
-    // Set timestamps
     member.CreatedAt = time.Now()
     member.UpdatedAt = time.Now()
 
@@ -78,18 +72,15 @@ func (uc *memberUsecase) Create(member *model.Member) error {
 }
 
 func (uc *memberUsecase) UpdateByRecruiter(recruiterID string, member *model.Member) error {
-	// Validasi statusAktivasi
 	if member.StatusAktivasi != "ACTIVE" && member.StatusAktivasi != "INACTIVE" && member.StatusAktivasi != "PENDING" {
 		return errors.New("invalid statusAktivasi")
 	}
 
-	// Validasi email
 	match, _ := regexp.MatchString(`^.+@.+\..+$`, member.Email)
 	if !match {
 		return errors.New("invalid email format")
 	}
 
-	// Password wajib
 	if member.Password == "" {
 		return errors.New("password is required")
 	}

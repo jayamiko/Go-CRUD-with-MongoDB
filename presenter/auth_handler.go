@@ -36,9 +36,6 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var tokenStr string
-	var resp map[string]interface{}
-
 	var member model.Member
 	err := h.MemberCollection.FindOne(ctx, bson.M{"email": req.Email}).Decode(&member)
 	if err == nil {
@@ -54,15 +51,23 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 			"exp":         time.Now().Add(24 * time.Hour).Unix(),
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		tokenStr, err = token.SignedString(jwtSecret)
+		tokenStr, err := token.SignedString(jwtSecret)
 		if err != nil {
 			http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 			return
 		}
 
-		member.Password = "" 
-		resp = map[string]interface{}{
-			"user":  member,
+		member.Password = ""
+
+		resp := map[string]interface{}{
+			"user": map[string]interface{}{
+				"_id":           member.ID.Hex(),
+				"recruiterId":   member.RecruiterID.Hex(),
+				"statusAktivasi": member.StatusAktivasi,
+				"email":         member.Email,
+				"createdAt":     member.CreatedAt,
+				"updatedAt":     member.UpdatedAt,
+			},
 			"token": tokenStr,
 		}
 		json.NewEncoder(w).Encode(resp)
@@ -88,16 +93,24 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		"exp":      time.Now().Add(24 * time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenStr, err = token.SignedString(jwtSecret)
+	tokenStr, err := token.SignedString(jwtSecret)
 	if err != nil {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
 
-	admin.Password = "" 
-	resp = map[string]interface{}{
-		"user":  admin,
+	admin.Password = ""
+
+	resp := map[string]interface{}{
+		"user": map[string]interface{}{
+			"_id":       admin.ID.Hex(),
+			"email":     admin.Email,
+			"role":      admin.Role,
+			"createdAt": admin.CreatedAt,
+			"updatedAt": admin.UpdatedAt,
+		},
 		"token": tokenStr,
 	}
+
 	json.NewEncoder(w).Encode(resp)
 }
